@@ -1,0 +1,4 @@
+*.fastq
+*.vcf
+__pycache__/
+Miniconda3-*.sh

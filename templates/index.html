@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APKMer Assembler - Step {{ step }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body data-step="{{ step }}">
+  <div class="bg-grid"></div>
+  <main class="wrap">
+    {% if step == 0 %}
+    <section class="welcome">
+      <div class="dna-row">
+        <span class="dna">🧬</span>
+        <span class="dna">🧬</span>
+        <span class="dna">🧬</span>
+      </div>
+      <h1>Welcome to APKMer Assembler</h1>
+      <p class="welcome-sub">An interactive genome-assembly workflow with clear step-by-step execution and live system logs.</p>
+      <div class="welcome-points">
+        <p>• Download and prepare reference FASTA input automatically.</p>
+        <p>• Simulate sequencing reads with configurable models and read counts.</p>
+        <p>• Estimate optimal k using KmerGenie and review the generated report.</p>
+        <p>• Run CoGram assembly and inspect final evaluation metrics in one place.</p>
+      </div>
+      <button id="startWizard" class="start-btn">Proceed to Pipeline →</button>
+    </section>
+    {% endif %}
+
+    {% if step >= 1 %}
+    <header class="hero">
+      <h1>APKMer Assembler</h1>
+      <p>One step at a time with live logs and clean outputs.</p>
+      <div class="progress">
+        <span class="dot {% if step >= 1 %}on{% endif %}">1</span>
+        <span class="line"></span>
+        <span class="dot {% if step >= 2 %}on{% endif %}">2</span>
+        <span class="line"></span>
+        <span class="dot {% if step >= 3 %}on{% endif %}">3</span>
+        <span class="line"></span>
+        <span class="dot {% if step >= 4 %}on{% endif %}">4</span>
+      </div>
+    </header>
+    {% endif %}
+
+    {% if step == 1 %}
+    <section class="panel">
+      <h2>Step 1: Choose Organism</h2>
+      <label for="organism">Organism</label>
+      <select id="organism">
+        {% for key, info in organisms.items() %}
+          <option value="{{ key }}">{{ info.label }}</option>
+        {% endfor %}
+      </select>
+      <button id="setupGenome">Prepare Reference Genome</button>
+      <p id="status" class="status"></p>
+      <pre id="log" class="log"></pre>
+      <button id="proceed" class="next hidden">Proceed to Simulate Reads ?</button>
+    </section>
+    {% endif %}
+
+    {% if step == 2 %}
+    <section class="panel">
+      <h2>Step 2: Simulate Reads</h2>
+      <label for="model">Model</label>
+      <select id="model">
+        <option value="hiseq">HiSeq</option>
+        <option value="novaseq">NovaSeq</option>
+        <option value="miseq">MiSeq</option>
+      </select>
+      <label for="nReads">Number of reads</label>
+      <input id="nReads" type="number" value="3000000" min="1000" step="1000" />
+      <button id="simulateReads">Run Simulation</button>
+      <p id="status" class="status"></p>
+      <pre id="log" class="log"></pre>
+      <button id="proceed" class="next hidden">Proceed to KmerGenie ?</button>
+    </section>
+    {% endif %}
+
+    {% if step == 3 %}
+    <section class="panel">
+      <h2>Step 3: KmerGenie</h2>
+      <label for="readMode">Read Type</label>
+      <select id="readMode">
+        <option value="paired">Paired-end (merge R1 + R2)</option>
+        <option value="single">Single-end (R1 only)</option>
+      </select>
+      <button id="runKmer">Run KmerGenie</button>
+      <p id="status" class="status"></p>
+      <div id="bestK" class="best-k"></div>
+      <pre id="log" class="log"></pre>
+      <div id="reportWrap" class="report hidden">
+        <h3>KmerGenie HTML Report</h3>
+        <iframe id="kmerReport" title="KmerGenie Report"></iframe>
+      </div>
+      <button id="proceed" class="next hidden">Proceed to CoGram ?</button>
+    </section>
+    {% endif %}
+
+    {% if step == 4 %}
+    <section class="panel">
+      <h2>Step 4: CoGram Assembly + Evaluation</h2>
+      <label class="inline"><input type="checkbox" id="useBestK" checked /> Use best K from KmerGenie</label>
+      <button id="runCogram">Run CoGram</button>
+      <p id="status" class="status"></p>
+      <div id="evalCards" class="eval-grid hidden"></div>
+      <pre id="log" class="log"></pre>
+      <button id="restart" class="next hidden">Restart Pipeline ↺</button>
+    </section>
+    {% endif %}
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
